@@ -13,7 +13,7 @@ from sklearn.metrics import classification_report, confusion_matrix
 from sklearn.model_selection import StratifiedKFold
 import numpy as np
 
-from utilz.file_tool import write_to_csv
+from py_utilz.file_tool import write_to_csv
 
 
 def print_classification_result(true_labels: np.ndarray, pre_labels: np.ndarray, legal_labels: set,

@@ -11,7 +11,7 @@ from typing import List
 import numpy as np
 
 
-def cdf_points(data: np.ndarray, xs: np.ndarray):
+def cdf_y_points(data: np.ndarray, xs: List[float]):
     cdf_y_points = list()
     p_i, n_i = 0, 0
     p_data_sorted: np.ndarray = data.copy()
@@ -78,11 +78,12 @@ def cdf_plot(legends: List[str], nums: List[List], x_label: str = None, title: s
             x, y = curves[index]
             content.append(['%s-%s' % (legends[index], x_label)] + x)
             content.append(['%s-%s' % (legends[index], 'CDF')] + y)
-        from utilz.file_tool import write_to_csv
+        from py_utilz.file_tool import write_to_csv
         write_to_csv(info_path, content)
 
 
-def sparse_cdf_plot(legends: List[str], data_list: List[List], xs: List[float], x_label: str = None,
+def sparse_cdf_plot(legends: List[str], data_list: List[List], xs: List or range or np.ndarray,
+                    x_label: str = None,
                     title: str = None, file_path: str = None, info_path: str = None, dpi=600, show=False):
     """
     按照特定的标度对数据进行分割
@@ -90,22 +91,13 @@ def sparse_cdf_plot(legends: List[str], data_list: List[List], xs: List[float], 
     """
     matplotlib.rcParams['axes.unicode_minus'] = False
     plt.rcParams['font.sans-serif'] = ['SimHei']
-    curves = []
+    cdf_y_points_list = []
     for data in data_list:
-        sorted_row = sorted(data)
-        count_sum = 0
-        i, cdfs = 0, list()
-        for point in xs:
-            while i < len(sorted_row) and point >= sorted_row[i]:
-                count_sum += 1
-                i += 1
-            cdfs.append(count_sum / len(sorted_row))
-        curves.append([xs, cdfs])
+        cdf_y_points_list.append(cdf_y_points(np.array(data), xs))
 
     plt.figure(figsize=(8, 5))
-    for index in range(len(curves)):
-        x, y = curves[index]
-        plt.plot(x, y, label=legends[index], marker='o', markersize=6, linewidth=2)
+    for index, ys in enumerate(cdf_y_points_list):
+        plt.plot(xs, ys, label=legends[index], marker='o', markersize=6, linewidth=2)
 
     if title is not None:
         plt.title(title, size='x-large')
@@ -123,11 +115,10 @@ def sparse_cdf_plot(legends: List[str], data_list: List[List], xs: List[float], 
 
     if info_path is not None:
         content = list()
-        for index in range(len(curves)):
-            x, y = curves[index]
-            content.append(['%s-%s' % (legends[index], x_label)] + x)
-            content.append(['%s-%s' % (legends[index], 'CDF')] + y)
-        from utilz.file_tool import write_to_csv
+        content.append(['xs'] + list(map(lambda x: str(x), xs)))
+        for index, ys in enumerate(cdf_y_points_list):
+            content.append(['%s-%s' % (legends[index], 'CDF')] + list(map(lambda y: '%.5f' % y, ys)))
+        from py_utilz.file_tool import write_to_csv
         write_to_csv(info_path, content, check_exist=False)
 
 
@@ -178,7 +169,8 @@ def scatter(legend_list: List[str], x_list: list, y_list: list, marker_list: Lis
 
 
 if __name__ == '__main__':
-    #    testArgs=[[0,1,1,2,2,3,3,4,5],
-    #          [10,10,12,12,14,14,16,18]]
-    # cdfPlot(['B','M'],testArgs[0],testArgs[1])
+    # testArgs = [[0, 1, 1, 2, 2, 3, 3, 4, 5],
+    #             [10, 10, 12, 12, 14, 14, 16, 18]]
+    # sparse_cdf_plot(['B', 'M'], testArgs, xs=range(0, 20), show=True, info_path='../temp/info.txt',
+    #                 file_path='../temp/pic.png')
     print('done')
