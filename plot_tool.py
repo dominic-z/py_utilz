@@ -10,6 +10,16 @@ from matplotlib import pyplot as plt
 from typing import List
 import numpy as np
 
+from matplotlib.font_manager import FontManager
+
+fm = FontManager()
+mat_fonts = set(f.name for f in fm.ttflist)
+matplotlib.rcParams['axes.unicode_minus'] = False
+if "SimHei" in mat_fonts:  # 对于win系统中文
+    plt.rcParams['font.sans-serif'] = ['SimHei']
+elif 'Arial Unicode MS' in mat_fonts:  # 对于mac系统的中文
+    plt.rcParams['font.sans-serif'] = ['Arial Unicode MS']
+
 
 @DeprecationWarning
 def cdf_plot(legends: List[str], data_list: List[List], x_label: str = None, title: str = None, x_lim: List = None,
@@ -28,8 +38,6 @@ def cdf_plot(legends: List[str], data_list: List[List], x_label: str = None, tit
     :param show:
     :return:
     """
-    matplotlib.rcParams['axes.unicode_minus'] = False
-    plt.rcParams['font.sans-serif'] = ['SimHei']
     curves = []
     for row in data_list:
         sorted_row = sorted(row)
@@ -132,8 +140,6 @@ def sparse_cdf_plot(legends: List[str], data_list: List[List], xs: List or range
     if type(xs) is range:
         xs = list(xs)
 
-    matplotlib.rcParams['axes.unicode_minus'] = False
-    plt.rcParams['font.sans-serif'] = ['SimHei']
     cdf_y_points_list = []
     for data in data_list:
         cdf_y_points_list.append(cdf_y_points(np.array(data), xs))
@@ -179,7 +185,6 @@ def cluster_elbow(x: List[int], err: List[float], title: str, file_path: str = N
     :param y_label:
     :return:
     """
-    plt.rcParams['font.sans-serif'] = ['SimHei']
     plt.figure(dpi=300)
     ax = plt.gca()
     ax.plot(x, err)
