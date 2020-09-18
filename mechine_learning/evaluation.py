@@ -8,7 +8,7 @@ import os
 from typing import List, Iterable
 
 from sklearn.base import clone
-from sklearn.externals import joblib
+import joblib
 from sklearn.metrics import classification_report, confusion_matrix
 from sklearn.model_selection import StratifiedKFold
 import numpy as np
@@ -100,8 +100,8 @@ def plot_rocs(y_true: np.ndarray, y_scores: List[np.ndarray], pos_label=None, le
     """
     对于两类问题画ROC曲线，y_scores之中有几个np.ndarray就会产生几个ROC曲线，狗日的pylab和pyplot接口还是有点差别的
     :param y_true: 1d-array 实际类标号，如果类标号是{-1, 1} or {0, 1}，则1将会被当做正例类，如果不是，那么要基于pos_label指定正例类
-    :param y_scores: 评分，对于正例类样本预测的可信度，可以是后验概率、可信度指标、decision_function等等，每一个元素都是一些评分
-    :param pos_label: 指定将什么类视为正例类
+    :param y_scores: 评分，即将样本预测为pos_label的可信度，可以是后验概率、可信度指标、decision_function等等，每一个元素都是一些评分
+    :param pos_label: 指定将什么类视为正例类，需要与y_score中的分数含义对应
     :param legends: 每条曲线的label
     :param fig_file_path: 图输出路径
     :param roc_info_path: fpr和tpr信息输出到文件中
@@ -122,7 +122,7 @@ def plot_rocs(y_true: np.ndarray, y_scores: List[np.ndarray], pos_label=None, le
         y_score = y_scores[i]
         color = colors[i % len(colors)]
         label = legends[i] if legends is not None else str(i)
-        fprs, tprs, _ = roc_curve(y_true, y_score, pos_label)
+        fprs, tprs, _ = roc_curve(y_true, y_score, pos_label=pos_label)
         best_point, min_distance = (0, 0), 1
         for j in range(len(fprs)):
             fpr, tpr = fprs[j], tprs[j]
@@ -147,52 +147,32 @@ def plot_rocs(y_true: np.ndarray, y_scores: List[np.ndarray], pos_label=None, le
     plt.ylabel('True Positive Rate')
     plt.title('Receiver operating characteristic example')
     plt.legend(loc="lower right", fontsize='small')
+    plt.show()
     if fig_file_path is not None:
         plt.savefig(fig_file_path)
 
 
-def plot_roc(y_true, y_score, pos_label, plot_path, axes_xlim=None, axes_ylim=None, roc_info_path=None, title=None):
-    import matplotlib.pyplot as plt
+def roc_best_points(y_true: np.ndarray, y_scores: List[np.ndarray], pos_label=None):
+    """
+    计算roc曲线中最优的点，即举例0,1最近的点，
+    :param y_true:
+    :param y_scores: 把样本预测为pos_label的概率
+    :param pos_label: 将什么类记为pos_label
+    :return: 返回一个List[Tuple(BestPoint,threshold)]列表，每个元素是一个最优点与阈值的tuple，即大于该阈值会被预测为pos_label
+    """
     from sklearn.metrics import roc_curve, auc
     from math import sqrt, pow
 
-    fig = plt.figure(figsize=(8, 6))
-    fprs, tprs, _ = roc_curve(y_true, y_score, pos_label)
-    roc_info = list()
-    roc_info.append(['fpr'] + fprs.tolist())
-    roc_info.append(['tpr'] + tprs.tolist())
-    plt.plot(fprs, tprs, c='b', linewidth=2)
-    plt.xlabel('False Positive Rate', fontsize='xx-large')
-    plt.ylabel('True Positive Rate', fontsize='xx-large')
-    auc_value = auc(fprs, tprs)
-    roc_info.append(['auc', auc_value])
-    title = 'ROC with auc=%.4f' % auc_value if title is None else title
-    plt.title(title, fontsize='xx-large')
-    plt.grid(alpha=0.75)
-    best_point, min_distance = (0, 0), 1
-    for j in range(len(fprs)):
-        fpr, tpr = fprs[j], tprs[j]
-        distance = sqrt(pow(fpr, 2) + pow(1 - tpr, 2))
-        if distance < min_distance:
-            best_point = (fpr, tpr)
-            min_distance = distance
-
-    axes = fig.add_axes([0.6, 0.2, 0.25, 0.25])
-    axes.plot(fprs, tprs, c='r', linewidth=2)
-    axes_xlim = [0, 0.2] if axes_xlim is None else axes_xlim
-    axes_ylim = [0.8, 1.0] if axes_ylim is None else axes_ylim
-    axes.set_xlim(axes_xlim)
-    axes.set_ylim(axes_ylim)
-    axes.plot(best_point[0], best_point[1], 'xk', markersize=10, markeredgewidth=2)
-    axes.plot([0, best_point[0]], [best_point[1], best_point[1]], linestyle='--', c='b', linewidth=2)
-    axes.plot([best_point[0], best_point[0]], [0, best_point[1]], linestyle='--', c='b', linewidth=2)
-    axes.set_xlabel('False Positive Rate', fontsize='large')
-    axes.set_ylabel('True Positive Rate', fontsize='large')
-    axes.annotate('(%.2f%%,%.2f%%)' % (best_point[0] * 100, best_point[1] * 100),
-                  xy=best_point, xytext=(10, -10), textcoords='offset points', fontsize='large')
-    plt.grid(alpha=0.75)
-
-    if roc_info_path is not None:
-        write_to_csv(roc_info_path, roc_info)
-
-    plt.savefig(plot_path)
+    best_points = []
+    for i in range(len(y_scores)):
+        fprs, tprs, thresholds = roc_curve(y_true, y_scores[i], pos_label=pos_label)
+        best_point, min_distance ,best_threshold= (0, 0), 1,0
+        for j in range(len(fprs)):
+            fpr, tpr = fprs[j], tprs[j]
+            distance = sqrt(pow(fpr, 2) + pow(1 - tpr, 2))
+            if distance < min_distance:
+                best_point = (fpr, tpr)
+                min_distance = distance
+                best_threshold=thresholds[j]
+        best_points.append((best_point,best_threshold))
+    return best_points
