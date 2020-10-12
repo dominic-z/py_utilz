@@ -122,21 +122,27 @@ def yield_read_from_char_file(file_path: str, start_row_index=0, end_row_index=N
             row_index += 1
 
 
-def write_to_char_file(file_path: str, rows: List, encoding='utf8', check_exist=True):
+def write_to_char_file(file_path: str, rows: List, encoding='utf8', buffer_size=50000, check_exist=True):
     """
     向字符文件中写入row_list内容
     :param file_path: string,output file path
     :param rows: list,every item is a string object and takes up one line
     :param encoding: str charset
+    :param buffer_size:
     :param check_exist: 是否检查文件是否存在，如果检查，且文件已经存在，则抛出异常；如果不检查，无论存在与否，都会创建或覆盖新文件
     :return:
     """
     import os
     if check_exist and os.path.exists(file_path):
         raise FileExistsError('there is already a file in' + file_path)
-    with open(file_path, 'w', encoding=encoding) as writeFileObj:
+    with open(file_path, 'w', encoding=encoding) as writer:
+        buffer = ""
         for row in rows:
-            writeFileObj.write(row + '\n')
+            buffer += row + '\n'
+            if len(buffer) % buffer_size == 0:
+                writer.write(buffer)
+                buffer = ""
+        writer.write(buffer)
 
 
 def write_to_csv(file_path: str, rows: List[Iterable], encoding='utf8', buffer_size=50000, check_exist=True):
