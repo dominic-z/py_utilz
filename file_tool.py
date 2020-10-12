@@ -116,7 +116,7 @@ def yield_read_from_char_file(file_path: str, start_row_index=0, end_row_index=N
             file.__next__()
         row_index = start_row_index
         for row in file:
-            if end_row_index is not None and row_index > end_row_index:
+            if end_row_index is not None and row_index >= end_row_index:
                 break
             yield row.strip()
             row_index += 1
