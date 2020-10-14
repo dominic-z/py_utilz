@@ -7,7 +7,7 @@ line : a string of the line
 
 @author: zxy
 """
-
+import re
 import csv
 from typing import List, Iterable
 
@@ -89,16 +89,17 @@ def read_from_char_file(file_path: str, start_row_index=0, end_row_index=None, e
     """
 
     with open(file_path, 'r', encoding=encoding) as file:
-        rows: List[str] = list()
+        lines: List[str] = list()
         for row_index in range(start_row_index):
             file.__next__()
         row_index = start_row_index
         for row in file:
             if end_row_index is not None and row_index >= end_row_index:
                 break
-            rows.append(row.strip())
+            row = re.sub("\n$", "", row)
+            lines.append(row)
             row_index += 1
-    return rows
+    return lines
 
 
 def yield_read_from_char_file(file_path: str, start_row_index=0, end_row_index=None, encoding='utf8'):
@@ -112,21 +113,21 @@ def yield_read_from_char_file(file_path: str, start_row_index=0, end_row_index=N
     :return: list 代表一行
     """
     with open(file_path, 'r', encoding=encoding) as file:
-        for row_index in range(start_row_index):
+        for line_index in range(start_row_index):
             file.__next__()
-        row_index = start_row_index
-        for row in file:
-            if end_row_index is not None and row_index >= end_row_index:
+        line_index = start_row_index
+        for line in file:
+            if end_row_index is not None and line_index >= end_row_index:
                 break
-            yield row.strip()
-            row_index += 1
+            yield re.sub("\n$", "", line)
+            line_index += 1
 
 
-def write_to_char_file(file_path: str, rows: List, encoding='utf8', buffer_size=50000, check_exist=True):
+def write_to_char_file(file_path: str, lines: List, encoding='utf8', buffer_size=50000, check_exist=True):
     """
     向字符文件中写入row_list内容
     :param file_path: string,output file path
-    :param rows: list,every item is a string object and takes up one line
+    :param lines: list,every item is a string object and takes up one line
     :param encoding: str charset
     :param buffer_size:
     :param check_exist: 是否检查文件是否存在，如果检查，且文件已经存在，则抛出异常；如果不检查，无论存在与否，都会创建或覆盖新文件
@@ -137,9 +138,9 @@ def write_to_char_file(file_path: str, rows: List, encoding='utf8', buffer_size=
         raise FileExistsError('there is already a file in' + file_path)
     with open(file_path, 'w', encoding=encoding) as writer:
         buffer = ""
-        for row in rows:
-            buffer += row + '\n'
-            if len(buffer) % buffer_size == 0:
+        for i, line in enumerate(lines):
+            buffer += line + '\n'
+            if i % buffer_size == 0:
                 writer.write(buffer)
                 buffer = ""
         writer.write(buffer)
@@ -169,41 +170,41 @@ def write_to_csv(file_path: str, rows: List[Iterable], encoding='utf8', buffer_s
         csv_writer.writerows(buffer_list)
 
 
-def add_to_char_file(file_path: str, rows: List, encoding='utf8', buffer_size=50000):
+def add_to_char_file(file_path: str, lines: List, encoding='utf8', buffer_size=50000, check_exist=False):
     """
     向已存在的CSV文件的尾行信息
     :param file_path: string,output file path
-    :param rows: list,every item is a string object and takes up one line
+    :param lines: list,every item is a string object and takes up one line
     :param encoding: str charset
     :param buffer_size: int buffer_size
+    :param check_exist: boolean 是否要检查文件是否存在
     :return:
     """
     import os
-    if not os.path.exists(file_path):
+    if check_exist and not os.path.exists(file_path):
         raise FileNotFoundError(file_path + ' does not exist')
     with open(file_path, 'a', newline='', encoding=encoding) as writer:
-        buffer_list = list()
-        for row in rows:
-            buffer_list.append(row)
-            if len(buffer_list) % buffer_size == 0:
-                for sub_row in buffer_list:
-                    writer.write(sub_row + '\n')
-                buffer_list.clear()
-        for row in buffer_list:
-            writer.write(row + '\n')
+        buffer = ""
+        for i, line in enumerate(lines):
+            buffer += line + '\n'
+            if i % buffer_size == 0:
+                writer.write(buffer)
+                buffer = ""
+        writer.write(buffer)
 
 
-def add_to_csv(file_path: str, rows: List[Iterable], encoding='utf8', buffer_size=50000):
+def add_to_csv(file_path: str, rows: List[Iterable], encoding='utf8', buffer_size=50000, check_exist=False):
     """
     向已存在的CSV文件的尾行信息
     :param file_path: string,output file path
     :param rows: list,every item is a string object and takes up one line
     :param encoding: str charset
     :param buffer_size: int buffer_size
+    :param check_exist: boolean 是否要检查文件是否存在
     :return:
     """
     import os
-    if not os.path.exists(file_path):
+    if check_exist and not os.path.exists(file_path):
         raise FileNotFoundError(file_path + ' does not exist')
     with open(file_path, 'a', newline='', encoding=encoding) as file:
         csv_writer = csv.writer(file)
