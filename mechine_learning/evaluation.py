@@ -135,7 +135,7 @@ def plot_rocs(y_true: np.ndarray, y_scores: List[np.ndarray], pos_label=None, le
         roc_info.append(['tprs-' + label] + tprs.tolist())
         roc_info.append(['best point-' + label, '%f,%f' % best_point])
         roc_info.append(['roc-' + label, roc_auc])
-        plt.plot(fprs, tprs, color=color, lw=lw, label='%s:ROC curve (area = %0.3f)' % (label, roc_auc))
+        plt.plot(fprs, tprs, color=color, lw=lw, label='y_scores[%s]:ROC curve (area = %0.3f)' % (label, roc_auc))
 
     if roc_info_path is not None:
         write_to_csv(roc_info_path, roc_info)
