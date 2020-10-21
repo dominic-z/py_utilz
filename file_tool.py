@@ -38,7 +38,7 @@ def read_from_csv(file_path: str, start_row_index=0, end_row_index=None, encodin
     :param encoding: str 制定字符集
     :return: list 每个元素也是一个列表，代表一行
     """
-    csv.field_size_limit(1000000)
+    # csv.field_size_limit(1000000)
     with open(file_path, 'r', newline='', encoding=encoding) as file:
         csv_reader = csv.reader(file)
         rows: List[List[str]] = list()
@@ -64,7 +64,7 @@ def yield_read_from_csv(file_path: str, start_row_index=0, end_row_index=None, e
     :param encoding: str 制定字符集
     :return: list 代表一行
     """
-    csv.field_size_limit(1000000)
+    # csv.field_size_limit(1000000)
     with open(file_path, 'r', newline='', encoding=encoding) as file:
         csv_reader = csv.reader(file)
         for row_index in range(start_row_index):
