@@ -30,7 +30,7 @@ class ARFF:
         :param file_path:
         :return: 一个arff对象
         """
-        content = file_tool.read_from_char_file(file_path)
+        content = file_tool.read_file(file_path)
         relation = ''
         attribute_names = list()
         attribute_types = list()

@@ -29,7 +29,7 @@ def print_some_line(file_path: str, num=1, start_row_index=0, encoding='utf8'):
                 print(repr(next(file)))
 
 
-def read_from_csv(file_path: str, start_row_index=0, end_row_index=None, encoding='utf8'):
+def read_csv(file_path: str, start_row_index=0, end_row_index=None, encoding='utf8'):
     """
     从CSV文件之中读取信息
     :param file_path: str 文件路径
@@ -54,7 +54,7 @@ def read_from_csv(file_path: str, start_row_index=0, end_row_index=None, encodin
     return rows
 
 
-def yield_read_from_csv(file_path: str, start_row_index=0, end_row_index=None, encoding='utf8'):
+def yield_read_csv(file_path: str, start_row_index=0, end_row_index=None, encoding='utf8'):
     """
     yield算法
     从CSV文件之中读取信息
@@ -78,7 +78,7 @@ def yield_read_from_csv(file_path: str, start_row_index=0, end_row_index=None, e
             row_index += 1
 
 
-def read_from_char_file(file_path: str, start_row_index=0, end_row_index=None, encoding='utf8'):
+def read_file(file_path: str, start_row_index=0, end_row_index=None, encoding='utf8'):
     """
     从CSV文件之中读取信息
     :param file_path: str 文件路径
@@ -102,7 +102,7 @@ def read_from_char_file(file_path: str, start_row_index=0, end_row_index=None, e
     return lines
 
 
-def yield_read_from_char_file(file_path: str, start_row_index=0, end_row_index=None, encoding='utf8'):
+def yield_read_file(file_path: str, start_row_index=0, end_row_index=None, encoding='utf8'):
     """
     yield算法
     从CSV文件之中读取信息
@@ -123,7 +123,7 @@ def yield_read_from_char_file(file_path: str, start_row_index=0, end_row_index=N
             line_index += 1
 
 
-def write_to_char_file(file_path: str, lines: List, encoding='utf8', buffer_size=50000, check_exist=True):
+def write_to_file(file_path: str, lines: List, encoding='utf8', buffer_size=50000, check_exist=True):
     """
     向字符文件中写入row_list内容
     :param file_path: string,output file path
@@ -170,14 +170,14 @@ def write_to_csv(file_path: str, rows: List[Iterable], encoding='utf8', buffer_s
         csv_writer.writerows(buffer_list)
 
 
-def add_to_char_file(file_path: str, lines: List, encoding='utf8', buffer_size=50000, check_exist=False):
+def append_to_file(file_path: str, lines: List, encoding='utf8', buffer_size=50000, check_exist=False):
     """
     向已存在的CSV文件的尾行信息
     :param file_path: string,output file path
     :param lines: list,every item is a string object and takes up one line
     :param encoding: str charset
     :param buffer_size: int buffer_size
-    :param check_exist: boolean 是否要检查文件是否存在
+    :param check_exist: boolean 是否要检查文件是否存在，如果为True，则文件不存在的时候会报错，否则的话会直接创建
     :return:
     """
     import os
@@ -193,7 +193,7 @@ def add_to_char_file(file_path: str, lines: List, encoding='utf8', buffer_size=5
         writer.write(buffer)
 
 
-def add_to_csv(file_path: str, rows: List[Iterable], encoding='utf8', buffer_size=50000, check_exist=False):
+def append_to_csv(file_path: str, rows: List[Iterable], encoding='utf8', buffer_size=50000, check_exist=False):
     """
     向已存在的CSV文件的尾行信息
     :param file_path: string,output file path
