@@ -8,22 +8,22 @@ def __log_time_str():
     return datetime.now().strftime("%Y-%m-%d %H:%M:%S")
 
 
-def info(log_info: str, file_path: str):
+def info(log_info: str, file_path: str = None):
     log_content = "[{time}] [INFO] {info}".format(time=__log_time_str(), info=log_info)
     __output(log_content, file_path=file_path)
 
 
-def warn(log_info: str, file_path: str):
+def warn(log_info: str, file_path: str = None):
     log_content = "[{time}] [WARN] {info}".format(time=__log_time_str(), info=log_info)
     __output(log_content, file_path=file_path)
 
 
-def error(log_info: str, file_path: str):
+def error(log_info: str, file_path: str = None):
     log_content = "[{time}] [ERROR] {info}".format(time=__log_time_str(), info=log_info)
     __output(log_content, file_path=file_path)
 
 
-def __output(log_content: str, file_path: str):
+def __output(log_content: str, file_path: str = None):
     if file_path is None:
         print(log_content)
     else:
