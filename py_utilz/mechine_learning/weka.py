@@ -5,7 +5,7 @@ Created on Mon Jan 29 12:33:11 2018
 @author: zxy
 """
 
-from py_utilz import file_tool
+from py_utilz import file_util
 from typing import Dict
 import numpy as np
 import pandas as pd
@@ -30,7 +30,7 @@ class ARFF:
         :param file_path:
         :return: 一个arff对象
         """
-        content = file_tool.read_file(file_path)
+        content = file_util.read_file(file_path)
         relation = ''
         attribute_names = list()
         attribute_types = list()
@@ -82,7 +82,7 @@ def csv_to_arff(input_file_path: str, output_file_path: str, relation='data', ty
     :param type_dict:
     :return:
     """
-    csv_input_file = file_tool.readFromCsv(input_file_path)
+    csv_input_file = file_util.read_csv(input_file_path)
     title_list = [['@relation\t' + relation]]
     for index in range(len(csv_input_file[0])):
         attribute = csv_input_file[0][index]
@@ -95,7 +95,7 @@ def csv_to_arff(input_file_path: str, output_file_path: str, relation='data', ty
 
         title_list.append(row.split(','))
     title_list.append(['@DATA'])
-    file_tool.writeToCsv(output_file_path, title_list + csv_input_file[1:])
+    file_util.write_to_csv(output_file_path, title_list + csv_input_file[1:])
 
 
 if __name__ == '__main__':

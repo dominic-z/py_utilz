@@ -9,7 +9,7 @@ from typing import List
 
 import joblib
 import numpy as np
-from py_utilz.file_tool import write_to_csv
+from py_utilz.file_util import write_to_csv
 from sklearn.base import clone
 from sklearn.metrics import classification_report, confusion_matrix
 from sklearn.model_selection import StratifiedKFold

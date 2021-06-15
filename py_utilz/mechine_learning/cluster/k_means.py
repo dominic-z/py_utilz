@@ -1,8 +1,8 @@
 import numpy as np
 from sklearn.cluster import KMeans
 
-from py_utilz.file_tool import write_to_csv
-from py_utilz.plot_tool import cluster_elbow
+from py_utilz.file_util import write_to_csv
+from py_utilz.plot_util import cluster_elbow
 
 
 def k_means_cluster(features, k_range, feature_names=None, sample_keys=None, elbow_path=None, sample_result_path=None,
