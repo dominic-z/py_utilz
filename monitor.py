@@ -6,5 +6,5 @@ def stop_watch(func, *args, **kwargs):
     func(*args, **kwargs)
     end_time = datetime.now()
     time_delta = end_time - start_time
-    seconds=time_delta.seconds+time_delta.microseconds/10e6
+    seconds = time_delta.seconds + time_delta.microseconds / 10e6
     print("it takes {0:.3f} seconds".format(seconds))

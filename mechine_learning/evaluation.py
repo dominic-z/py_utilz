@@ -5,15 +5,14 @@ Created on Sun May  6 21:11:05 2018
 @author: zxy
 """
 import os
-from typing import List, Iterable
+from typing import List
 
-from sklearn.base import clone
 import joblib
+import numpy as np
+from py_utilz.file_tool import write_to_csv
+from sklearn.base import clone
 from sklearn.metrics import classification_report, confusion_matrix
 from sklearn.model_selection import StratifiedKFold
-import numpy as np
-
-from py_utilz.file_tool import write_to_csv
 
 
 def print_classification_result(true_labels: np.ndarray, pre_labels: np.ndarray, legal_labels: set,
@@ -161,7 +160,7 @@ def roc_best_points(y_true: np.ndarray, y_scores: List[np.ndarray], pos_label=No
     :param pos_label: 将什么类记为pos_label
     :return: 返回一个List[Tuple(BestPoint,threshold)]列表，每个元素是一个最优点与阈值的tuple，即大于该阈值会被预测为pos_label
     """
-    from sklearn.metrics import roc_curve, auc
+    from sklearn.metrics import roc_curve
     from math import sqrt, pow
 
     best_points = []

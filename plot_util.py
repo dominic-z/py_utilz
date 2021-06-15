@@ -130,7 +130,8 @@ def sparse_cdf_plot(legends: List[str], data_list: List[List], xs: List or range
     :param x_label: 横轴文字
     :param x_ticks: 横轴坐标
     :param title: 图标题
-    :param semi_log: 是否半对数表示，如果是半对数表示，要求xs的最小值不能为0，建议为数据中比最小值更小的10的n次方，如0.1，因为半对数坐标中不应该包含0
+    :param semi_log: 是否半对数表示，如果是半对数表示，要求xs的最小值不能为0
+        建议为数据中比最小值更小的10的n次方，如0.1，因为半对数坐标中不应该包含0
     :param file_path: 输出文件路径
     :param info_path: 输出二维坐标信息的文件路径
     :param dpi: 图片分辨率
@@ -212,7 +213,8 @@ def scatter(legend_list: List[str], xs_list: List[List], ys_list: [List], marker
     :param xs_list: 横坐标列表
     :param ys_list: 纵坐标列表
     :param marker_list: 打点的符号类型，具体可用的请查阅https://matplotlib.org/api/markers_api.html#module-matplotlib.markers
-    :param color_list: 颜色列表，可用的包括rgb元组，16进制rgb，以及单字符等等，具体请查阅https://matplotlib.org/api/colors_api.html?highlight=color#module-matplotlib.colors
+    :param color_list: 颜色列表，可用的包括rgb元组，16进制rgb，以及单字符等等
+        具体请查阅https://matplotlib.org/api/colors_api.html?highlight=color#module-matplotlib.colors
     :param title:
     :param x_label:
     :param y_label:
@@ -233,7 +235,7 @@ def scatter(legend_list: List[str], xs_list: List[List], ys_list: [List], marker
     plt.title('title' if title is None else title, size='x-large')
     plt.legend(legend_list, loc=4, fontsize='x-large')
     plt.grid(alpha=0.3)
-    if not file_path is None:
+    if file_path is not None:
         plt.savefig(file_path, dpi=dpi)
 
     plt.show()
