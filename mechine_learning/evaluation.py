@@ -39,7 +39,8 @@ def print_classification_result(true_labels: np.ndarray, pre_labels: np.ndarray,
         for row in confusion_matrix_array:
             print(row)
         print(
-            '\nNote:Ci,j is equal to the number of observations known to be in group i but predicted to be in group j.\n')
+            '\nNote:Ci,j is equal to the number of observations known'
+            ' to be in group i but predicted to be in group j.\n')
     if result_output_path is not None:
         if os.path.exists(result_output_path):
             raise FileExistsError('there is already a file in ' + result_output_path)
@@ -166,13 +167,13 @@ def roc_best_points(y_true: np.ndarray, y_scores: List[np.ndarray], pos_label=No
     best_points = []
     for i in range(len(y_scores)):
         fprs, tprs, thresholds = roc_curve(y_true, y_scores[i], pos_label=pos_label)
-        best_point, min_distance ,best_threshold= (0, 0), 1,0
+        best_point, min_distance, best_threshold = (0, 0), 1, 0
         for j in range(len(fprs)):
             fpr, tpr = fprs[j], tprs[j]
             distance = sqrt(pow(fpr, 2) + pow(1 - tpr, 2))
             if distance < min_distance:
                 best_point = (fpr, tpr)
                 min_distance = distance
-                best_threshold=thresholds[j]
-        best_points.append((best_point,best_threshold))
+                best_threshold = thresholds[j]
+        best_points.append((best_point, best_threshold))
     return best_points
